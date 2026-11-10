@@ -1,0 +1,11 @@
+{
+  "category": "order_issue",
+  "priority": "medium",
+  "summary": "Cliente informa que o pedido 84721 chegou incompleto e solicita ajuda.",
+  "entities": {
+    "order_id": "84721",
+    "missing_item": "bebida"
+  },
+  "confidence": 0.96,
+  "needs_human_review": false
+}

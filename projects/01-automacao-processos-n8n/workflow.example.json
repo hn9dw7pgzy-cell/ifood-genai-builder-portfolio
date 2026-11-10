@@ -1,0 +1,17 @@
+{
+  "name": "AI Builder - Triagem inteligente (exemplo)",
+  "active": false,
+  "nodes": [
+    {"name":"Entrada","type":"n8n-nodes-base.webhook","parameters":{"httpMethod":"POST","path":"ai-triage"}},
+    {"name":"Normalizar","type":"n8n-nodes-base.code","parameters":{"jsCode":"return items.map(item => ({ json: { request_id: crypto.randomUUID(), text: String(item.json.text || '').trim(), received_at: new Date().toISOString() } }));"}},
+    {"name":"Classificar com LLM","type":"n8n-nodes-base.httpRequest","parameters":{"method":"POST","url":"={{$env.LLM_ENDPOINT}}","sendBody":true,"jsonBody":"={{ { input: $json.text, response_format: 'structured_json' } }}"}},
+    {"name":"Roteamento","type":"n8n-nodes-base.switch","parameters":{"mode":"expression","output":"={{$json.category}}"}},
+    {"name":"Auditoria","type":"n8n-nodes-base.googleSheets","parameters":{"operation":"append","documentId":"CONFIGURE_ME","sheetName":"triage_log"}}
+  ],
+  "connections": {
+    "Entrada":{"main":[[{"node":"Normalizar","type":"main","index":0}]]},
+    "Normalizar":{"main":[[{"node":"Classificar com LLM","type":"main","index":0}]]},
+    "Classificar com LLM":{"main":[[{"node":"Roteamento","type":"main","index":0}]]},
+    "Roteamento":{"main":[[{"node":"Auditoria","type":"main","index":0}]]}
+  }
+}

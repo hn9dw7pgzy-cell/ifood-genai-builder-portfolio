@@ -1,0 +1,14 @@
+flowchart LR
+    A[Webhook: nova solicitação] --> B[Validar e normalizar entrada]
+    B --> C{Campos mínimos presentes?}
+    C -- Não --> D[Solicitar complemento]
+    C -- Sim --> E[LLM: classificar e extrair]
+    E --> F{Confiança >= limiar?}
+    F -- Não --> G[Fila de revisão humana]
+    F -- Sim --> H[Aplicar regras de negócio]
+    H --> I{Rota definida?}
+    I -- Não --> G
+    I -- Sim --> J[Encaminhar para CRM ou fila]
+    J --> K[Registrar decisão e métricas]
+    G --> K
+    D --> K
